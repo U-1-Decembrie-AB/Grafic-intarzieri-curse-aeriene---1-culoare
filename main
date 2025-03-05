@@ -1,0 +1,46 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 1. Load the data from the CSV file
+df = pd.read_csv('DelayedFlights.csv')
+
+# 2. Select only the columns of interest (Month, ArrDelay)
+#    and remove records that do not have a delay (null).
+df = df[['Month', 'ArrDelay']].dropna(subset=['ArrDelay'])
+
+# 3. Calculate the average delay for each month
+monthly_avg = df.groupby('Month')['ArrDelay'].mean()
+
+# 4. Sort the values by month (if not already in order 1-12)
+monthly_avg = monthly_avg.sort_index()
+
+# 5. Define the month labels
+months_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+# 6. Calculate the overall average delay
+overall_avg = monthly_avg.mean()
+
+# 7. Create the figure and axis
+plt.figure(figsize=(10, 6))
+
+# 8. Draw a bar chart
+bars = plt.bar(months_labels, monthly_avg, color='#1f77b4')  # a single color
+
+# 9. Add labels above each bar (delay values)
+for i, v in enumerate(monthly_avg):
+    plt.text(i, v + 0.5, f"{v:.1f}", ha='center', fontsize=9)
+
+# 10. Add the line representing the overall average
+plt.axhline(overall_avg, color='gray', linestyle='--')
+plt.text(len(months_labels)-0.9, overall_avg + 0.5, 
+         f"Media = {overall_avg:.1f}",
+         color='gray', fontsize=10, fontstyle='italic')
+
+# 11. Set the axis label and grid
+plt.ylabel("Întârzieri (minute)", fontsize=12)
+plt.grid(axis='y', alpha=0.5)
+
+# 12. Display the plot
+plt.show()
